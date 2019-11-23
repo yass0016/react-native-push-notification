@@ -413,7 +413,7 @@ public class RNPushNotificationHelper {
         if (repeatType != null) {
             long fireDate = (long) bundle.getDouble("fireDate");
 
-            boolean validRepeatType = Arrays.asList("time", "month", "week", "day", "hour", "minute").contains(repeatType);
+            boolean validRepeatType = Arrays.asList("time", "year", "month", "week", "day", "hour", "minute").contains(repeatType);
 
             // Sanity checks
             if (!validRepeatType) {
@@ -433,25 +433,11 @@ public class RNPushNotificationHelper {
                 case "time":
                     newFireDate = fireDate + repeatTime;
                     break;
+                case "year":
+                    newFireDate = fireDate + (ONE_DAY * 365);
+                    break;
                 case "month":
-                    final Calendar fireDateCalendar = new GregorianCalendar();
-                    fireDateCalendar.setTime(new Date(fireDate));
-                    final int fireDay = fireDateCalendar.get(Calendar.DAY_OF_MONTH);
-                    final int fireMinute = fireDateCalendar.get(Calendar.MINUTE);
-                    final int fireHour = fireDateCalendar.get(Calendar.HOUR_OF_DAY);
-
-                    final Calendar nextEvent = new GregorianCalendar();
-                    nextEvent.setTime(new Date());
-                    final int currentMonth = nextEvent.get(Calendar.MONTH);
-                    int nextMonth = currentMonth < 11 ? (currentMonth + 1) : 0;
-                    nextEvent.set(Calendar.YEAR, nextEvent.get(Calendar.YEAR) + (nextMonth == 0 ? 1 : 0));
-                    nextEvent.set(Calendar.MONTH, nextMonth);
-                    final int maxDay = nextEvent.getActualMaximum(Calendar.DAY_OF_MONTH);
-                    nextEvent.set(Calendar.DAY_OF_MONTH, fireDay <= maxDay ? fireDay : maxDay);
-                    nextEvent.set(Calendar.HOUR_OF_DAY, fireHour);
-                    nextEvent.set(Calendar.MINUTE, fireMinute);
-                    nextEvent.set(Calendar.SECOND, 0);
-                    newFireDate = nextEvent.getTimeInMillis();
+                    newFireDate = fireDate + (ONE_DAY * 30);
                     break;
                 case "week":
                     newFireDate = fireDate + 7 * ONE_DAY;
